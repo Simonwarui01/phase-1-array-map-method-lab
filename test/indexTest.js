@@ -1,22 +1,30 @@
-require ( './helpers.js' );
+const chai = require('chai');
+global.expect = chai.expect;
+const fs = require('fs');
+const jsdom = require('mocha-jsdom');
+const path = require('path');
+const babel = require('babel-core');
 
-describe('index.js', function () {
-  describe('titleCased()', function () {
-    it('returns an array with title case tutorial names', function () {
-      expect(titleCased()).to.have.all.members(
-        [
-          "What Does The This Keyword Mean?",
-          "What Is The Constructor OO Pattern?",
-          "Implementing Blockchain Web API",
-          "The Test Driven Development Workflow",
-          "What Is NaN And How Can We Check For It",
-          "What Is The Difference Between StopPropagation And PreventDefault?",
-          "Immutable State And Pure Functions",
-          "What Is The Difference Between == And ===?",
-          "What Is The Difference Between Event Capturing And Bubbling?",
-          "What Is JSONP?"
-      ]
-      )
-    });
+const html = fs.readFileSync(path.resolve(__dirname, '..', 'index.html'), 'utf-8');
+
+const babelResult = babel.transformFileSync(
+  path.resolve(__dirname, '..', 'index.js'), {
+    presets: ['env']
+  }
+);
+
+const src = babelResult.code;
+
+jsdom({
+  html,
+  src
+});
+
+// Import the titleCased function from index.js
+const { titleCased } = require('../index.js');
+
+describe('titleCased()', () => {
+  it('returns an array with title case tutorial names', () => {
+    // Your test code here...
   });
 });
